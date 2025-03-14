@@ -1,0 +1,77 @@
+import pygame
+from sys import exit
+
+pygame.init() #basis
+screen = pygame.display.set_mode((800, 600)) #screen 
+pygame.display.set_caption('First Game') #title
+sky = pygame.image.load('graphics/sky.png').convert() #icon      convert png for faster load
+sky = pygame.transform.scale(sky, (800, 600)) #icon
+ground = pygame.image.load('graphics/Battleground1.png').convert()#achtergrond
+ground = pygame.transform.scale(ground, (1000, 600)) #achtergrond
+test_font = pygame.font.Font("font\BreatheFireIii-PKLOB.ttf", 50) #achtergrond
+clock = pygame.time.Clock() #fps
+
+#text           
+test_surface = pygame.Surface((100, 100)) #surface
+test_ground = ground.get_rect() #achtergrond
+test_ground.topleft = (0, 400) #achtergrond
+test_text = test_font.render('My game', True, (255, 140, 0, 255)) #text     "firebrick3": (205, 38, 38, 255),
+
+character_surface = pygame.image.load('graphics/3/3_enemies_1_attack_000.png').convert_alpha()#character
+character_surface = pygame.transform.scale(character_surface, (200, 200)) #character
+character_rectangle = character_surface.get_rect(midbottom = (0, 400)) #character movement improvement
+
+
+player_surf = pygame.image.load('graphics/5/5_enemies_1_attack_000.png').convert_alpha()
+player_surf = pygame.transform.scale(player_surf, (200, 200))
+player_surf = pygame.transform.flip(player_surf, True, False)
+player_surf_rectangle = player_surf.get_rect(midbottom = (800, 400))
+
+
+while True: 
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+            
+            
+        if event.type == pygame.MOUSEMOTION:
+            print(event.pos)
+        
+    screen.blit(sky, (0, 0)) 
+    screen.blit(ground, (0, 50)) #position    
+    screen.blit(test_text, (300, 20)) #position
+
+    
+    character_rectangle.x += 2 #movenment
+    if character_rectangle.right > 800:
+        character_rectangle.left = 0 #reset loop 
+    screen.blit(character_surface, (character_rectangle))
+    
+    player_surf_rectangle.x -= 2
+    if player_surf_rectangle.left < 0:
+        player_surf_rectangle.right = 800
+    screen.blit(player_surf, (player_surf_rectangle))
+
+    character_rectangle.colliderect(player_surf_rectangle)   #collision
+    if character_rectangle.colliderect(player_surf_rectangle):
+        character_rectangle.x = 0
+        player_surf_rectangle.x = 800
+    
+    player_surf_rectangle.collidepoint(pygame.mouse.get_pos()) #mouse and colliion on point
+    if player_surf_rectangle.collidepoint(pygame.mouse.get_pos()):
+        player_surf_rectangle.x = 0
+        print("collision")
+        print(pygame.mouse.get_pressed())
+       
+    
+    pygame.display.update() #update screen
+    clock.tick(60) #fps 60
+    
+    # sprite = 2D img set (stop motion)
+    # sprite sheet = collection of sprites
+    # sprite strip = row of sprites in sprite sheet
+    # sprite strip animation = animate sprite strip (loop)
+    # sprite strip frame = single sprite in sprite strip        
+    # sprite strip frame animation = animate sprite strip frame (loop)
+    # sprite strip frame animation = animate sprite strip frame (once) 
